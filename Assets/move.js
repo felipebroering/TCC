@@ -1,11 +1,60 @@
-#pragma strict
+    #pragma strict
 
-function Start () {
+    var smooth:int; // Determines how quickly object moves towards position
+    var targetPosition:Vector3;
+    var speed = 60;
+    
+    function Start () {
 
-}
+    }
 
-function Update () {
-	
-	transform.position.x += Input.GetAxis("Horizontal") * 2;
-	transform.position.z += Input.GetAxis("Vertical") * 2;
-}
+    function Update () {
+        if(Input.GetKeyDown(KeyCode.Mouse0)){
+     
+            smooth  =1;
+     
+               
+            var playerPlane = new Plane(Vector3.up, transform.position);
+     
+            var ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+     
+            var hitdist = 0.0;
+     
+                   
+     
+            if (playerPlane.Raycast (ray, hitdist)) {
+     
+                var targetPoint = ray.GetPoint(hitdist);
+     
+                targetPosition = ray.GetPoint(hitdist);
+     
+                var targetRotation = Quaternion.LookRotation(targetPoint - transform.position);
+     
+                transform.rotation = targetRotation;             
+     
+            }
+     
+        }
+     
+               
+     
+        var dir:Vector3 = targetPosition - transform.position;
+     
+        var dist:float = dir.magnitude;
+     
+        var move:float = speed * Time.deltaTime;
+     
+        if(dist > move){
+     
+        transform.position += dir.normalized * move;
+     
+        } else {
+     
+        transform.position = targetPosition;
+     
+        }
+                
+     
+         transform.position += (targetPosition - transform.position).normalized * speed * Time.deltaTime;
+               
+    }
